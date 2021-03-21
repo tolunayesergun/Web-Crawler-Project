@@ -1,0 +1,115 @@
+﻿.parentCard {
+    position: relative;
+  
+}
+body {
+  padding:20px 50px 50px 50px;
+}
+.headL {
+    font-size: 29px;
+    text-align: center;
+    font-weight: bold;
+    font-family: 'ui-monospace';
+}
+
+.menuParent {
+    display: inline-block;
+    width: 25%;
+}
+
+.LeftParent {
+    height: 85vh;
+    overflow: auto;
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    padding: 2px 3px 2px 7px;
+    position: relative;
+    border-right: 1px solid #bfbfbf;
+}
+
+
+.LeftParent i {
+    position: absolute;
+    left: -30px;
+    font-size: 23px;
+}
+
+.leftSelectNav {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    cursor: pointer;
+    border-radius: .2rem;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.leftSelectNav:hover {
+    background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25));
+}
+
+.active {
+    background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25));
+}
+
+.buttonText {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding-left: 5px;
+    font-weight:500;
+}
+
+.tableBD {
+    width: 75%;
+    height: 85vh !important;
+    position: relative;
+    display: inline-block;
+    padding: 5px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: none;
+    box-sizing: border-box;
+ 
+}
+
+.tableBody {
+}
+
+.card {
+    box-shadow: none !important
+}
+
+
+.modal {
+    text-align: center;
+}
+
+@media screen and (min-width: 768px) {
+    .modal:before {
+        display: inline-block;
+        vertical-align: middle;
+        content: " ";
+        height: 100%;
+    }
+}
+
+.modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+}
+
+@media screen and (min-width: 768px) {
+    .modal-lg {
+        width: 20vw;
+    }
+}
