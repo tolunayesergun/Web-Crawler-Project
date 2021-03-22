@@ -1,42 +1,19 @@
 ﻿
 
-    <div class="card">
-        <div class="card-body table-responsive col col-sm-12">
-            <div class="d-flex">
-                <div class="mr-auto p-1">
-                    <button type="button" class="btn  btn-primary mr-2" data-toggle="modal" data-target="#modalMahalleCreate">
-                        Yeni Mahalle Ekle
-                    </button>
-
-                    <div class="modal fade" id="modalMahalleCreate">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-
-                                <section class="content">
-                                    <div class="card">
-                                        <form asp-action="Create" method="post" id="modalMahalleCreateForm" autocomplete="off">
-
-
-                                            <div class="card-footer text-center">
-                                                <button type="button" class="btn btn-danger pl-3 pr-3 mr-5" data-dismiss="modal">Kapat</button>
-                                                <input type="submit" value="Ekle" class="btn btn-primary  pl-3 pr-3" />
-                                            </div>
-                                        </form>
-                                    </div>
-                                </section>
-
+    <div class="card  text-center ">
+        <div class="card-body table-responsive col col-sm-12 "  >      
+                <div class="d-flex justify-content-center">
+                    <div class="col col-5">
+                        <div class="input-group">
+                            <div class="input-group mb-3 mt-1 mb-1">
+                                <input type="text" class="form-control text-center shadow-none" placeholder="Website URL" aria-label="Website URL" aria-describedby="basic-addon2" onfocus="this.placeholder = ''" onblur="this.placeholder = ' Website URL'">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="button">Hesapla</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-
-                </div>
-                <div class="mr-2 p-2">
-                    Ara:
-                    <input type="text" id="searchInput" />
-                </div>
-            </div>
-       
+                </div>      
         </div>
     </div>
 

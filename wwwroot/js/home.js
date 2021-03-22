@@ -16,7 +16,7 @@
 function showPart2() {
     $.ajax({
         type: "POST",
-        url: "/YonetimPaneli/viewTalepPart",
+        url: "/Home/viewPart2",
         success: function (data) {
             $('#tableArea').empty();
             $('#tableArea').append(data);
@@ -31,7 +31,7 @@ function showPart2() {
 function showPart3() {
     $.ajax({
         type: "POST",
-        url: "/YonetimPaneli/viewDurumPart",
+        url: "/Home/viewPart3",
         success: function (data) {
             $('#tableArea').empty();
             $('#tableArea').append(data);
@@ -46,7 +46,7 @@ function showPart3() {
 function showPart4() {
     $.ajax({
         type: "POST",
-        url: "/YonetimPaneli/viewNotPart",
+        url: "/Home/viewPart4",
         success: function (data) {
             $('#tableArea').empty();
             $('#tableArea').append(data);
@@ -61,7 +61,7 @@ function showPart4() {
 function showPart5() {
     $.ajax({
         type: "POST",
-        url: "/YonetimPaneli/viewSmsPart",
+        url: "/Home/viewPart5",
         success: function (data) {
             $('#tableArea').empty();
             $('#tableArea').append(data);

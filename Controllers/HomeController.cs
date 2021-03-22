@@ -57,5 +57,33 @@ namespace WebCrawlerProject.Controllers
 
             return PartialView("~/Views/PartialViews/partialPart1.cshtml");
         }
+
+        [HttpPost]
+        public ActionResult viewPart2()
+        {
+
+            return PartialView("~/Views/PartialViews/partialPart2.cshtml");
+        }
+
+        [HttpPost]
+        public ActionResult viewPart3()
+        {
+
+            return PartialView("~/Views/PartialViews/partialPart3.cshtml");
+        }
+
+        [HttpPost]
+        public ActionResult viewPart4()
+        {
+
+            return PartialView("~/Views/PartialViews/partialPart4.cshtml");
+        }
+
+        [HttpPost]
+        public ActionResult viewPart5()
+        {
+
+            return PartialView("~/Views/PartialViews/partialPart5.cshtml");
+        }
     }
 }
