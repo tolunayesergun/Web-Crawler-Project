@@ -11,9 +11,9 @@
             <div class="col col-6">
                 <div class="input-group mt-2">
                     <div class="input-group mb-3 mt-1 mb-1">
-                        <input type="text" class="form-control text-center shadow-none" placeholder="Website URL" aria-label="Website URL" aria-describedby="basic-addon2" onfocus="this.placeholder = ''" onblur="this.placeholder = ' Website URL'">
+                        <input id="webKeywordURL" type="text" class="form-control text-center shadow-none" placeholder="Website URL" aria-label="Website URL" aria-describedby="basic-addon2" onfocus="this.placeholder = ''" onblur="this.placeholder = ' Website URL'">
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">Hesapla</button>
+                            <button class="btn btn-primary" type="button" onclick="getKeywordData()">Hesapla</button>
                         </div>
                     </div>
                 </div>
@@ -24,78 +24,30 @@
 
 
 <div class="card-body table-responsive col col-sm-12 ">
-
-
     <h3 class="sbs-title">Kelimeler ve frekansları</h3>
-    <div class="badge-container">
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
+    <div id="spanArea">
     </div>
-
 </div>
 
 
 <script>
 
-    function getData() {
+    function getKeywordData() {
         var dbData = [];
         checkedItems = [];
-        let weburl = $("#webURL").val();
-        var model = { "weburl": weburl };
+        let webKeywordURL = $("#webKeywordURL").val();
+        var model = { "weburl": webKeywordURL };
 
         $.ajax({
             type: "POST",
-            url: "/Home/GetData",
+            url: "/Home/GetKeywordResult",
             data: model,
             success: function (data) {
-                console.log(data);
-                $.each(data, function (index, value) {
-                    $('#spanArea').append("<span class='badge badge-primary'>" + value + " - ( 150 ) </span>");
-                });
+                if (data != null && data.wordList != null) {
+                    $.each(data.wordList, function (index, item) {
+                        $('#spanArea').append(" <span class='badge badge-primary'> Kelime : " + item.word + " - ( Skor : " + item.score + " ) </span> ");
+                    });
+                }
             },
             error: function (error) {
                 console.log(JSON.stringify(error))

@@ -161,45 +161,10 @@ namespace WebCrawlerProject.Helpers
             str = Regex.Replace(str, pattern, "");
             str = str.Replace("  ", " ");
 
-            #region CommentBlock
-            //str = str.Replace(".", "");
-            //str = str.Replace(",", "");
-            //str = str.Replace(";", "");
-            //str = str.Replace(":", "");
-            //str = str.Replace("-", "");
-            //str = str.Replace("_", "");
-            //str = str.Replace("?", "");
-            //str = str.Replace("*", "");
-            //str = str.Replace("\\", "");
-            //str = str.Replace("=", "");
-            //str = str.Replace("}", "");
-            //str = str.Replace(")", "");
-            //str = str.Replace("]", "");
-            //str = str.Replace("(", "");
-            //str = str.Replace("[", "");
-            //str = str.Replace("/", "");
-            //str = str.Replace("{", "");
-            //str = str.Replace("&", "");
-            //str = str.Replace("%", "");
-            //str = str.Replace("½", "");
-            //str = str.Replace("+", "");
-            //str = str.Replace("$", "");
-            //str = str.Replace("^", "");
-            //str = str.Replace("#", "");
-            //str = str.Replace("'", "");
-            //str = str.Replace("£", "");
-            //str = str.Replace("!", "");
-            //str = str.Replace("~", "");
-            //str = str.Replace("`", "");
-            //str = str.Replace("´", "");
-            //str = str.Replace("¨", "");
-            //str = str.Replace("\"", "");
-            #endregion CommentBlock
-
             return str;
         }
 
-        public static UrlModel GetPageInfoByUrl(string baseUrl)
+        public static UrlModel GetPageInfoByUrl(string baseUrl, bool lookForSub = true)
         {
             var result = new UrlModel { Level = 1, Url = baseUrl };
             var processed = new List<String> { baseUrl };
@@ -207,23 +172,25 @@ namespace WebCrawlerProject.Helpers
 
             result.WordList = GetWordsAsList(document, baseUrl);
 
-            foreach (HtmlNode link in document.DocumentNode.SelectNodes("//a[@href]"))
+            if (lookForSub)
             {
-                var href = link.Attributes.FirstOrDefault(x => x.Name.ToUpper() == "HREF");
-                if (href != null && !href.Value.ToUpper().StartsWith("TEL") && !href.Value.ToUpper().StartsWith("MAILTO") && GetBaseUrl(ConvertUrl(href.Value, baseUrl)) == GetBaseUrl(ConvertUrl(baseUrl, baseUrl)))
+                foreach (HtmlNode link in document.DocumentNode.SelectNodes("//a[@href]"))
                 {
-                    var tempPointer = new UrlModel { Level = 2, Url = ConvertUrl(href.Value, baseUrl) };
-                    var convertedHref = ConvertUrl(href.Value, baseUrl);
-                    if (!processed.Any(x => x.ToUpper() == convertedHref.ToUpper()))
+                    var href = link.Attributes.FirstOrDefault(x => x.Name.ToUpper() == "HREF");
+                    if (href != null && !href.Value.ToUpper().StartsWith("TEL") && !href.Value.ToUpper().StartsWith("MAILTO") && GetBaseUrl(ConvertUrl(href.Value, baseUrl)) == GetBaseUrl(ConvertUrl(baseUrl, baseUrl)))
                     {
-                        processed.Add(convertedHref);
-                        result.ChildUrlList.Add(new UrlModel { Level = 2, Url = convertedHref });
+                        var tempPointer = new UrlModel { Level = 2, Url = ConvertUrl(href.Value, baseUrl) };
+                        var convertedHref = ConvertUrl(href.Value, baseUrl);
+                        if (!processed.Any(x => x.ToUpper() == convertedHref.ToUpper()))
+                        {
+                            processed.Add(convertedHref);
+                            result.ChildUrlList.Add(new UrlModel { Level = 2, Url = convertedHref });
+                        }
                     }
                 }
+
+                GetSecondLevelUrls(result, processed);
             }
-
-            GetSecondLevelUrls(result, processed);
-
             return result;
         }
 

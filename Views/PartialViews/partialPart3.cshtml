@@ -14,7 +14,7 @@
                 <div class="input-group mt-2">
                     <div class="input-group mb-3 mt-1 mb-1">
                         <input type="text" id="firstWebUrl" class="form-control text-center shadow-none" placeholder="Website URL" aria-label="Website URL" aria-describedby="basic-addon2" onfocus="this.placeholder = ''" onblur="this.placeholder = ' Website URL'">
-                        <button class="btn btn-primary ml-2 mr-2" type="button" id="createSpan">Karşılaştır</button>
+                        <button class="btn btn-primary ml-2 mr-2" type="button" id="createSpan" onclick="getCompareData()">Karşılaştır</button>
                         <input type="text" id="secondWebUrl" class="form-control text-center shadow-none" placeholder="Website URL" aria-label="Website URL" aria-describedby="basic-addon2" onfocus="this.placeholder = ''" onblur="this.placeholder = ' Website URL'">
                         <div class="input-group-append">
                         </div>
@@ -32,87 +32,32 @@
     <h3 class="sbs-title">Kelimeler ve frekansları</h3>
     <div class="badge-container">
 
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
+     
     </div>
 
 </div>
 
 
 <script>
-    urlPoolArray = new Array();
-    counter = 0;
 
-    function badgetCreate(url) {
-        return `<span class="badge badge-primary" id='${counter}'> ${url} </span>`
-    }
-
-    $('#createSpan').click(function () {
-        var elem = badgetCreate($('#webUrl').val());
-        console.log(elem);
-        urlPoolArray.push($('#webUrl').val());
-        counter++;
-        $('#urlPool').append(elem);
-    });
-
-
-    function getData() {
-        var dbData = [];
+    function getCompareData() {
         checkedItems = [];
-        let weburl = $("#webURL").val();
-        var model = { "weburl": weburl };
+        let weburl1 = $("#firstWebUrl").val();
+        let weburl2 = $("#secondWebUrl").val();
+
+        var model = {
+            "weburl1": weburl1,
+            "weburl2": weburl2
+        };
 
         $.ajax({
             type: "POST",
-            url: "/Home/GetData",
+            url: "/Home/CompareTwoSite",
             data: model,
             success: function (data) {
                 console.log(data);
                 $.each(data, function (index, value) {
-                    $('#spanArea').append("<span class='badge badge-primary'>" + value + " - ( 150 ) </span>");
+                    //$('#spanArea').append("<span class='badge badge-primary'>" + value + " - ( 150 ) </span>");
                 });
             },
             error: function (error) {

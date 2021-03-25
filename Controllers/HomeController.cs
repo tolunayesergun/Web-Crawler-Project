@@ -55,7 +55,46 @@ namespace WebCrawlerProject.Controllers
         public JsonResult GetData(string weburl)
         {
             var WordList = HtmlParser.GetPageInfoByUrl(weburl);
-            return  Json(WordList);
+            return Json(WordList);
+        }
+
+        [HttpPost]
+        public JsonResult GetKeywordResult(string weburl)
+        {
+            var WordList = HtmlParser.GetPageInfoByUrl(weburl);
+            WordList.WordList = WordList.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
+            return Json(WordList);
+        }
+
+        [HttpPost]
+        public JsonResult CompareTwoSite(string weburl1, string weburl2)
+        {
+            var WordList1 = HtmlParser.GetPageInfoByUrl(weburl1, false);
+            var WordList2 = HtmlParser.GetPageInfoByUrl(weburl2, false);
+            WordList1.WordList = WordList1.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
+
+            var matchList = new CompareModel 
+            { 
+                FirstSite = WordList1,
+                SecondSite = WordList2,
+                Score = 1
+            };
+
+            foreach (var item in WordList1.WordList)
+            {
+                if(WordList2.WordList.Any(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I")))
+                {
+                    var word = WordList2.WordList.FirstOrDefault(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I"));
+                    matchList.WordList.Add(new WordModel { Word = item.Word, Frequency = word.Frequency });
+                    matchList.Score *= word.Frequency;
+                }
+            }
+
+            var secondTotalCount = WordList2.WordList.Sum(x => x.Frequency);
+            matchList.Score /= secondTotalCount;
+
+            WordList2.WordList = WordList2.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
+            return Json(matchList);
         }
 
         [HttpPost]
