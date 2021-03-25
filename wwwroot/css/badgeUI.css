@@ -1,0 +1,230 @@
+﻿@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap");
+
+* {
+    box-sizing: border-box;
+}
+
+.sr-only {
+    visibility: hidden;
+}
+
+.hidden {
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    display: none;
+    overflow: hidden;
+}
+
+
+
+.challenge-title {
+    text-align: center;
+    padding: 0;
+    margin: 1rem 0 0.5rem;
+    color: #4d555f;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.challenge-subtitle {
+    text-align: center;
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: #b5bbc3;
+}
+
+.challenge-part-of {
+    text-align: center;
+    margin: 1rem 0 0;
+    font-size: 0.875rem;
+    color: #b5bbc3;
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+    .challenge-part-of a,
+    .challenge-part-of a:visited {
+        color: #b5bbc3;
+        -webkit-text-decoration-style: wavy;
+        text-decoration-style: wavy;
+    }
+
+        .challenge-part-of a:hover, .challenge-part-of a:active,
+        .challenge-part-of a:visited:hover,
+        .challenge-part-of a:visited:active {
+            color: #d1d5da;
+        }
+
+.container {
+    margin: 1.5rem;
+    padding: 2rem;
+    width: 1000px;
+    min-height: 300px;
+    border: 1px solid #d1d5da;
+    border-radius: 1rem;
+}
+
+.sbs-title {
+    color: #c3c8cf;
+    text-transform: uppercase;
+    font-size: 0.625rem;
+    margin: 0 0 1rem;
+    padding: 1rem 0;
+}
+
+    .sbs-title:first-of-type {
+        padding-top: 0;
+        margin-top: 0;
+    }
+
+hr {
+    border-top: 1px solid #edeff1;
+    margin: 3rem 0 2rem;
+}
+
+.badge-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+    .badge-container .badge {
+        margin: 0.25rem 0;
+    }
+
+        .badge-container .badge:not(:last-of-type) {
+            margin-right: 1rem;
+        }
+
+.badge {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+}
+
+    .badge.badge-default {
+        background-color: #edeff1;
+        color: #4d555f;
+        border-color: #4d555f;
+    }
+
+    .badge.badge-primary {
+        background-color: #cdf0d7;
+        color: #2b9348;
+        border-color: #2b9348;
+    }
+
+    .badge.badge-yellow {
+        background-color: #fef5d5;
+        color: #e8b906;
+        border-color: #e8b906;
+    }
+
+    .badge.badge-orange {
+        background-color: #fef0ea;
+        color: #f86624;
+        border-color: #f86624;
+    }
+
+    .badge.badge-red {
+        background-color: #fdeeef;
+        color: #ea3546;
+        border-color: #ea3546;
+    }
+
+    .badge.badge-purple {
+        background-color: #e4d5f3;
+        color: #662e9b;
+        border-color: #662e9b;
+    }
+
+    .badge.badge-blue {
+        background-color: #e4f5f8;
+        color: #43bccd;
+        border-color: #43bccd;
+    }
+
+    .badge.badge-round {
+        border-radius: 1rem;
+    }
+
+        .badge.badge-round.badge-tagged::before {
+            left: 0.875rem;
+        }
+
+    .badge.badge-tagged {
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+        .badge.badge-tagged::before {
+            content: "";
+            font-family: "Font Awesome 5 Free";
+            position: absolute;
+            top: 50%;
+            left: 0.75rem;
+            transform: translate(-50%, -50%);
+        }
+
+    .badge.badge-closable {
+        padding-right: 1.5rem;
+        position: relative;
+    }
+
+        .badge.badge-closable .close {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 1.5rem;
+            cursor: pointer;
+            opacity: 0.4;
+        }
+
+            .badge.badge-closable .close:hover {
+                opacity: 1;
+            }
+
+    .badge.badge-add {
+        padding-left: 1.5rem;
+        position: relative;
+        color: #b5bbc3;
+        min-width: 75px;
+    }
+
+        .badge.badge-add:hover, .badge.badge-add:focus {
+            outline: 0;
+            border: 1px dotted #b5bbc3;
+            color: #4d555f;
+        }
+
+            .badge.badge-add:focus::after {
+                display: none;
+            }
+
+        .badge.badge-add::before {
+            content: "";
+            font-family: "Font Awesome 5 Free";
+            position: absolute;
+            top: 50%;
+            left: 0.75rem;
+            transform: translate(-50%, -50%);
+        }
+
+        .badge.badge-add::after {
+            pointer-events: none;
+            content: attr(data-placeholder);
+            position: absolute;
+            top: 50%;
+            left: 1.5rem;
+            transform: translateY(-50%);
+        }

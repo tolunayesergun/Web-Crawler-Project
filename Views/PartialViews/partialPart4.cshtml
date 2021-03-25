@@ -1,5 +1,138 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿
+
+
+<div class="card  text-center ">
+    <div class="card-body table-responsive col col-sm-12 ">
+        <div class="d-flex justify-content-center">
+            <div class="col col-10">
+                <b>
+                    Web sitelerini benzerlik skorlarına göre yüksekten düşüğe doğru Sıralar 
+                    Her URL için, sırasını, skorunu, alt URL’lerin ağaç yapısını ve her duğümdeki
+                    her bir anahtar kelimenin yer alma sayısı ile birlikte yazdırır
+                </b>
+                <div class="input-group mt-2">
+                    <div class="input-group mb-3 mt-1 mb-1">
+                        <input type="text"  class="form-control text-center shadow-none" placeholder="Base URL" aria-label="Base URL" aria-describedby="basic-addon2" onfocus="this.placeholder = ''" onblur="this.placeholder = ' Base URL'">
+                        <div class="input-group-append">
+
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-warning btn-sm mb-2" type="button" data-toggle="modal" data-target="#exampleModal"  >Havuza Site Ekle</button>
+
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Recipient:</label>
+                                        <input type="text" class="form-control" id="webUrl">
+                                    </div>
+                             
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="createSpan" data-dismiss="modal">Send message</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="urlPool">
+                </div>
+
+
+
+                <button class="btn btn-success mt-4" type="button" id="createSpan">İndexle Ve Sırala</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="card-body table-responsive col col-sm-12 ">
+
+
+    <h3 class="sbs-title">Kelimeler ve frekansları</h3>
+    <div class="badge-container">
+
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <span class="badge badge-primary" > Badge - ( 150 ) </span>
+       
+    </div>
+
+</div>
+
+
+<script>
+    urlPoolArray = new Array();
+
+    function badgetCreate(url) {
+        return `<span class="badge badge-primary mr-2 mt-2" spanUrl="${url}"> ${url}  <button class="btn btn-sm text-white " onclick="SpanClose(this)">X</button> </span> `
+    } 
+
+    $('#createSpan').click(function () {
+        var elem = badgetCreate($('#webUrl').val());
+        urlPoolArray.push($('#webUrl').val());
+        $('#urlPool').append(elem);
+    });
+
+    function SpanClose(span) {
+
+        var spanId = $(span).parent().attr("spanUrl");
+        urlPoolArray = urlPoolArray.filter(function (x) { return x !== spanId; });
+        $(span).parent().remove();
+
+    }
+</script>

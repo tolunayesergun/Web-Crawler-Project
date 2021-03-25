@@ -52,6 +52,13 @@ namespace WebCrawlerProject.Controllers
 
 
         [HttpPost]
+        public JsonResult GetData(string weburl)
+        {
+            var WordList = HtmlParser.GetPageInfoByUrl(weburl);
+            return  Json(WordList);
+        }
+
+        [HttpPost]
         public ActionResult viewPart1()
         {
 
