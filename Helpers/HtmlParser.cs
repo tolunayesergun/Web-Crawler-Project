@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using WebCrawlerProject.Models;
 
 namespace WebCrawlerProject.Helpers
@@ -171,6 +170,7 @@ namespace WebCrawlerProject.Helpers
             var document = Crawler.GetHtmlContent(baseUrl);
 
             result.WordList = GetWordsAsList(document, baseUrl);
+            result.AllWordOffSite.AddRange(result.WordList);
 
             if (lookForSub)
             {
@@ -189,8 +189,26 @@ namespace WebCrawlerProject.Helpers
                     }
                 }
 
+                result.KeywordList = result.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
                 GetSecondLevelUrls(result, processed);
             }
+
+            result.KeywordList = result.KeywordList.GroupBy(x => x.Word)
+                                 .Select(cl => new WordModel
+                                 {
+                                     Word = cl.First().Word,
+                                     Frequency = cl.Sum(c => c.Frequency),
+                                     Score = cl.Sum(c => c.Score),
+                                 }).ToList();
+
+            result.AllWordOffSite = result.AllWordOffSite.GroupBy(x => x.Word)
+                                .Select(cl => new WordModel
+                                {
+                                    Word = cl.First().Word,
+                                    Frequency = cl.Sum(c => c.Frequency),
+                                    Score = cl.Sum(c => c.Score),
+                                }).ToList();
+
             return result;
         }
 
@@ -199,8 +217,9 @@ namespace WebCrawlerProject.Helpers
             foreach (var item in model.ChildUrlList)
             {
                 var document = Crawler.GetHtmlContent(item.Url);
-
                 item.WordList = GetWordsAsList(document, item.Url);
+                item.KeywordList = item.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
+                model.KeywordList.AddRange(item.KeywordList);
 
                 foreach (HtmlNode link in document.DocumentNode.SelectNodes("//a[@href]"))
                 {
@@ -213,7 +232,11 @@ namespace WebCrawlerProject.Helpers
                         {
                             processed.Add(convertedHref);
                             var thirdLevelDocument = Crawler.GetHtmlContent(convertedHref);
-                            item.ChildUrlList.Add(new UrlModel { Level = 3, Url = convertedHref, WordList = GetWordsAsList(thirdLevelDocument, convertedHref) });
+                            var addItem = new UrlModel { Level = 3, Url = convertedHref, WordList = GetWordsAsList(thirdLevelDocument, convertedHref) };
+                            addItem.KeywordList = addItem.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
+                            model.KeywordList.AddRange(addItem.KeywordList);
+                            model.AllWordOffSite.AddRange(addItem.WordList);
+                            item.ChildUrlList.Add(addItem);
                         }
                     }
                 }

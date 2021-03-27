@@ -1,24 +1,64 @@
-﻿
+﻿<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    ul, #myUL {
+        list-style-type: none;
+    }
 
+    #myUL {
+        margin: 0;
+        padding: 0;
+    }
+
+    .caret {
+        cursor: pointer;
+        -webkit-user-select: none; /* Safari 3.1+ */
+        -moz-user-select: none; /* Firefox 2+ */
+        -ms-user-select: none; /* IE 10+ */
+        user-select: none;
+    }
+
+        .caret::before {
+            content: "\25B6";
+            color: black;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+    .caret-down::before {
+        -ms-transform: rotate(90deg); /* IE 9 */
+        -webkit-transform: rotate(90deg); /* Safari */
+        ' transform: rotate(90deg);
+    }
+
+    .nested {
+        display: none;
+    }
+
+    .active {
+        display: block;
+        background: white !important;
+        color: black !important;
+    }
+</style>
 
 <div class="card  text-center ">
     <div class="card-body table-responsive col col-sm-12 ">
         <div class="d-flex justify-content-center">
             <div class="col col-10">
                 <b>
-                    Web sitelerini benzerlik skorlarına göre yüksekten düşüğe doğru Sıralar 
+                    Web sitelerini benzerlik skorlarına göre yüksekten düşüğe doğru Sıralar
                     Her URL için, sırasını, skorunu, alt URL’lerin ağaç yapısını ve her duğümdeki
                     her bir anahtar kelimenin yer alma sayısı ile birlikte yazdırır
                 </b>
                 <div class="input-group mt-2">
                     <div class="input-group mb-3 mt-1 mb-1">
-                        <input type="text"  class="form-control text-center shadow-none" placeholder="Base URL" aria-label="Base URL" aria-describedby="basic-addon2" onfocus="this.placeholder = ''" onblur="this.placeholder = ' Base URL'">
+                        <input id="baseUrl" type="text" class="form-control text-center shadow-none" placeholder="Base URL" aria-label="Base URL" aria-describedby="basic-addon2" onfocus="this.placeholder = ''" onblur="this.placeholder = ' Base URL'">
                         <div class="input-group-append">
 
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-warning btn-sm mb-2" type="button" data-toggle="modal" data-target="#exampleModal"  >Havuza Site Ekle</button>
+                <button class="btn btn-warning btn-sm mb-2" type="button" data-toggle="modal" data-target="#exampleModal">Havuza Site Ekle</button>
 
                 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
@@ -35,7 +75,7 @@
                                         <label for="recipient-name" class="col-form-label">Recipient:</label>
                                         <input type="text" class="form-control" id="webUrl">
                                     </div>
-                             
+
                                 </form>
                             </div>
                             <div class="modal-footer">
@@ -52,7 +92,7 @@
 
 
 
-                <button class="btn btn-success mt-4" type="button" id="createSpan">İndexle Ve Sırala</button>
+                <button class="btn btn-success mt-4" type="button" onclick="indexAndOrderSites()" id="btnIndex">İndexle Ve Sırala</button>
             </div>
         </div>
     </div>
@@ -65,62 +105,85 @@
     <h3 class="sbs-title">Kelimeler ve frekansları</h3>
     <div class="badge-container">
 
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
 
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <h2>Tree View</h2>
+        <p>A tree view represents a hierarchical view of information, where each item can have a number of subitems.</p>
+        <p>Click on the arrow(s) to open or close the tree branches.</p>
 
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+        <ul id="myUL">
+            <li>
+                <span class="caret">Beverages</span>
+                <ul class="nested">
+                    <li>Water</li>
+                    <li>Coffee</li>
+                    <li>
+                        <span class="caret">Tea</span>
+                        <ul class="nested">
+                            <li>Black Tea</li>
+                            <li>White Tea</li>
+                            <li>
+                                <span class="caret">Green Tea</span>
+                                <ul class="nested">
+                                    <li>Sencha</li>
+                                    <li>Gyokuro</li>
+                                    <li>Matcha</li>
+                                    <li>Pi Lo Chun</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
 
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary" > Badge - ( 150 ) </span>
-       
     </div>
 
 </div>
 
-
 <script>
+
+    function indexAndOrderSites() {
+        checkedItems = [];
+        let weburl1 = $("#baseUrl").val();
+        let weburl2 = urlPoolArray;
+
+        var model = {
+            "baseUrl": weburl1,
+            "siteList": weburl2
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/IndexAndOrderSites",
+            data: model,
+            success: function (data) {
+                console.log(data);
+                $.each(data, function (index, value) {
+                    //$('#spanArea').append("<span class='badge badge-primary'>" + value + " - ( 150 ) </span>");
+                });
+            },
+            error: function (error) {
+                console.log(JSON.stringify(error))
+            }
+        })
+
+    };
+
+    var toggler = document.getElementsByClassName("caret");
+    var i;
+
+    for (i = 0; i < toggler.length; i++) {
+        toggler[i].addEventListener("click", function () {
+            this.parentElement.querySelector(".nested").classList.toggle("active");
+            this.classList.toggle("caret-down");
+        });
+    }
+
     urlPoolArray = new Array();
 
     function badgetCreate(url) {
         return `<span class="badge badge-primary mr-2 mt-2" spanUrl="${url}"> ${url}  <button class="btn btn-sm text-white " onclick="SpanClose(this)">X</button> </span> `
-    } 
+    }
 
     $('#createSpan').click(function () {
         var elem = badgetCreate($('#webUrl').val());

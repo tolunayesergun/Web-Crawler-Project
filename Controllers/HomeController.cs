@@ -39,6 +39,7 @@ namespace WebCrawlerProject.Controllers
 
             return View();
         }
+
         public IActionResult Privacy()
         {
             return View();
@@ -50,18 +51,17 @@ namespace WebCrawlerProject.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-
         [HttpPost]
         public JsonResult GetData(string weburl)
         {
-            var WordList = HtmlParser.GetPageInfoByUrl(weburl);
+            var WordList = HtmlParser.GetPageInfoByUrl(weburl, false);
             return Json(WordList);
         }
 
         [HttpPost]
         public JsonResult GetKeywordResult(string weburl)
         {
-            var WordList = HtmlParser.GetPageInfoByUrl(weburl);
+            var WordList = HtmlParser.GetPageInfoByUrl(weburl, false);
             WordList.WordList = WordList.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
             return Json(WordList);
         }
@@ -69,32 +69,16 @@ namespace WebCrawlerProject.Controllers
         [HttpPost]
         public JsonResult CompareTwoSite(string weburl1, string weburl2)
         {
-            var WordList1 = HtmlParser.GetPageInfoByUrl(weburl1, false);
-            var WordList2 = HtmlParser.GetPageInfoByUrl(weburl2, false);
-            WordList1.WordList = WordList1.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
+            var result = CompareFunction(weburl1, weburl2);
+            return Json(result);
+        }
 
-            var matchList = new CompareModel 
-            { 
-                FirstSite = WordList1,
-                SecondSite = WordList2,
-                Score = 1
-            };
+        [HttpPost]
+        public JsonResult IndexAndOrderSites(string baseUrl, string[] siteList)
+        {
+            var result = IndexAndOrder(baseUrl, siteList);
 
-            foreach (var item in WordList1.WordList)
-            {
-                if(WordList2.WordList.Any(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I")))
-                {
-                    var word = WordList2.WordList.FirstOrDefault(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I"));
-                    matchList.WordList.Add(new WordModel { Word = item.Word, Frequency = word.Frequency });
-                    matchList.Score *= word.Frequency;
-                }
-            }
-
-            var secondTotalCount = WordList2.WordList.Sum(x => x.Frequency);
-            matchList.Score /= secondTotalCount;
-
-            WordList2.WordList = WordList2.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
-            return Json(matchList);
+            return Json("Ok");
         }
 
         [HttpPost]
@@ -130,6 +114,66 @@ namespace WebCrawlerProject.Controllers
         {
 
             return PartialView("~/Views/PartialViews/partialPart5.cshtml");
+        }
+
+        private CompareModel CompareFunction(string weburl1, string weburl2)
+        {
+            var WordList1 = HtmlParser.GetPageInfoByUrl(weburl1, false);
+            var WordList2 = HtmlParser.GetPageInfoByUrl(weburl2, false);
+            WordList1.WordList = WordList1.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
+
+            var matchList = new CompareModel
+            {
+                FirstSite = WordList1,
+                SecondSite = WordList2,
+                Score = 1
+            };
+
+            foreach (var item in WordList1.WordList)
+            {
+                if (WordList2.WordList.Any(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I")))
+                {
+                    var word = WordList2.WordList.FirstOrDefault(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I"));
+                    matchList.WordList.Add(new WordModel { Word = item.Word, Frequency = word.Frequency });
+                    matchList.Score *= word.Frequency;
+                }
+            }
+
+            var secondTotalCount = WordList2.WordList.Sum(x => x.Frequency);
+            matchList.Score /= secondTotalCount;
+
+            WordList2.WordList = WordList2.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
+            return matchList;
+        }
+
+        private IndexAndOrderModel IndexAndOrder(string baseUrl, string[] siteList)
+        {
+            var resultModel = new IndexAndOrderModel
+            {
+                BaseSite = HtmlParser.GetPageInfoByUrl(baseUrl, true)
+            };
+
+            foreach (var siteUrl in siteList)
+            {
+                var subSiteInfo = HtmlParser.GetPageInfoByUrl(siteUrl, true);
+                subSiteInfo.IndexingScore = 1;
+                foreach (var item in resultModel.BaseSite.KeywordList)
+                {
+                    if (subSiteInfo.WordList.Any(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I")))
+                    {
+                        var word = subSiteInfo.WordList.FirstOrDefault(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I"));
+                        subSiteInfo.IndexingScore *= word.Frequency;
+                    }
+                }
+
+                var secondTotalCount = subSiteInfo.WordList.Sum(x => x.Frequency);
+                subSiteInfo.IndexingScore /= secondTotalCount;
+
+                resultModel.SubSites.Add(subSiteInfo);
+            }
+
+            resultModel.SubSites = resultModel.SubSites.OrderByDescending(x => x.IndexingScore).ToList();
+            return resultModel;
         }
     }
 }
