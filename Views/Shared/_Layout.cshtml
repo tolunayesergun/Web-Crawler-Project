@@ -11,6 +11,18 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 
+    <style>
+        #loading {
+            position: fixed;
+            left: 40%;
+            top: 40%;
+            display: none;
+            z-index: 1000;
+            height: 200px;
+            width: 300px;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -26,7 +38,21 @@
         </div>
     </footer>
 
+    <div id="loading">
+        <img style="height:200px;width:300px" src="@Url.Content("~/img/loading.gif")" />
+    </div>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        var $loading = $('#loading').hide();
+        $(document)
+            .ajaxStart(function () {
+                $loading.show();
+            })
+            .ajaxStop(function () {
+                $loading.hide();
+            });
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

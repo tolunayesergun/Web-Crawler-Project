@@ -40,7 +40,7 @@
         color: black !important;
     }
 </style>
-
+<script src="@Url.Content("~/js/tree.min.js")"></script>
 <div class="card  text-center ">
     <div class="card-body table-responsive col col-sm-12 ">
         <div class="d-flex justify-content-center">
@@ -100,44 +100,10 @@
 
 
 <div class="card-body table-responsive col col-sm-12 ">
-
-
     <h3 class="sbs-title">Kelimeler ve frekansları</h3>
-    <div class="badge-container">
-
-
-        <h2>Tree View</h2>
-        <p>A tree view represents a hierarchical view of information, where each item can have a number of subitems.</p>
-        <p>Click on the arrow(s) to open or close the tree branches.</p>
-
-        <ul id="myUL">
-            <li>
-                <span class="caret">Beverages</span>
-                <ul class="nested">
-                    <li>Water</li>
-                    <li>Coffee</li>
-                    <li>
-                        <span class="caret">Tea</span>
-                        <ul class="nested">
-                            <li>Black Tea</li>
-                            <li>White Tea</li>
-                            <li>
-                                <span class="caret">Green Tea</span>
-                                <ul class="nested">
-                                    <li>Sencha</li>
-                                    <li>Gyokuro</li>
-                                    <li>Matcha</li>
-                                    <li>Pi Lo Chun</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+    <div class="container">
 
     </div>
-
 </div>
 
 <script>
@@ -158,9 +124,20 @@
             data: model,
             success: function (data) {
                 console.log(data);
-                $.each(data, function (index, value) {
-                    //$('#spanArea').append("<span class='badge badge-primary'>" + value + " - ( 150 ) </span>");
-                });
+
+                var mainModel = [{ id: '-1', text: 'Sitelerin Ağaç Yapıları', children: [] }];                
+
+                if (data.baseSite != null) {
+                    mainModel[0].children.push(TreeViewNode(data.baseSite, "0")[0]);
+                }
+
+                if (data.subSites != null) {
+                    $.each(data.subSites, function (index, value) {
+                        mainModel[0].children.push(TreeViewNode(value, "0")[0]);
+                    });
+                }
+
+                initiateTreeView(mainModel);
             },
             error: function (error) {
                 console.log(JSON.stringify(error))
@@ -169,14 +146,56 @@
 
     };
 
-    var toggler = document.getElementsByClassName("caret");
-    var i;
+    function TreeViewNode(obj, id, isSub = false) {
+        debugger;
+        var model = [];
 
-    for (i = 0; i < toggler.length; i++) {
-        toggler[i].addEventListener("click", function () {
-            this.parentElement.querySelector(".nested").classList.toggle("active");
-            this.classList.toggle("caret-down");
-        });
+        var text = obj.url;
+        if (!isSub) {
+            text = "Skor : (" + obj.indexingScore + ") - " + text;
+        }
+
+        var item = {
+            "id": id,
+            "text": text,
+                    "children": []
+        };
+
+        var incrementId = 0;
+        if (obj.childUrlList != null) {
+            $.each(obj.childUrlList, function (index, value) {
+                if (value.childUrlList != null && value.childUrlList.length > 0) {
+                    item.children.push(TreeViewNode(value, (id + "-" + incrementId), true));
+                }
+                else {
+
+                    item.children.push({
+                        "id": (id + "-" + incrementId),
+                        "text": value.url,
+                        "children": []
+                    });
+                }
+                incrementId++;
+            });
+        }
+
+        if (isSub) {
+            return item;
+        }
+        model.push(item);
+        return model;
+    }
+
+    function initiateTreeView(model) {
+        console.log(model);
+        let tree = new Tree('.container', {
+            data: model,
+            closeDepth: 3,
+            loaded: function () {
+            },
+            onChange: function () {
+            }
+        })
     }
 
     urlPoolArray = new Array();

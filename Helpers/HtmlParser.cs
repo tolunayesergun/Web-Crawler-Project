@@ -228,15 +228,19 @@ namespace WebCrawlerProject.Helpers
                     {
                         var tempPointer = new UrlModel { Level = 2, Url = ConvertUrl(href.Value, model.Url) };
                         var convertedHref = ConvertUrl(href.Value, model.Url);
-                        if (!processed.Any(x => x.ToUpper() == convertedHref.ToUpper()))
+                        var upperConvertedHref = convertedHref.ToUpper();
+                        if (!processed.Any(x => x.ToUpper() == upperConvertedHref))
                         {
-                            processed.Add(convertedHref);
-                            var thirdLevelDocument = Crawler.GetHtmlContent(convertedHref);
-                            var addItem = new UrlModel { Level = 3, Url = convertedHref, WordList = GetWordsAsList(thirdLevelDocument, convertedHref) };
-                            addItem.KeywordList = addItem.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
-                            model.KeywordList.AddRange(addItem.KeywordList);
-                            model.AllWordOffSite.AddRange(addItem.WordList);
-                            item.ChildUrlList.Add(addItem);
+                            if (!upperConvertedHref.EndsWith(".PNG") && !upperConvertedHref.EndsWith(".JPG") && !upperConvertedHref.EndsWith(".JPEG") && !upperConvertedHref.EndsWith(".GIF") && !upperConvertedHref.EndsWith(".GİF"))
+                            {
+                                processed.Add(convertedHref);
+                                var thirdLevelDocument = Crawler.GetHtmlContent(convertedHref);
+                                var addItem = new UrlModel { Level = 3, Url = convertedHref, WordList = GetWordsAsList(thirdLevelDocument, convertedHref) };
+                                addItem.KeywordList = addItem.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
+                                model.KeywordList.AddRange(addItem.KeywordList);
+                                model.AllWordOffSite.AddRange(addItem.WordList);
+                                item.ChildUrlList.Add(addItem);
+                            }
                         }
                     }
                 }
@@ -301,6 +305,16 @@ namespace WebCrawlerProject.Helpers
                     }
                 }
             }
+
+            if (url.Contains("#"))
+            {
+                var split = url.Split("#");
+                url = split[0];
+            }
+
+            url = url.EndsWith("//") ? url.Substring(0, url.Length - 2) : url;
+            url = url.EndsWith("/") ? url.Substring(0, url.Length - 1) : url;
+
             return url;
         }
     }

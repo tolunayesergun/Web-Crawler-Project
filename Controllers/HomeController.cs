@@ -78,7 +78,7 @@ namespace WebCrawlerProject.Controllers
         {
             var result = IndexAndOrder(baseUrl, siteList);
 
-            return Json("Ok");
+            return Json(result);
         }
 
         [HttpPost]
@@ -141,8 +141,13 @@ namespace WebCrawlerProject.Controllers
 
             var secondTotalCount = WordList2.WordList.Sum(x => x.Frequency);
             matchList.Score /= secondTotalCount;
+            matchList.Divide = secondTotalCount;
 
-            WordList2.WordList = WordList2.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
+            matchList.Score = decimal.Round(matchList.Score, 2, MidpointRounding.AwayFromZero);
+
+            WordList1.WordList = WordList1.WordList.OrderByDescending(x => x.Frequency).Take(10).ToList();
+            WordList2.WordList = WordList2.WordList.OrderByDescending(x => x.Frequency).Take(10).ToList();
+            matchList.WordList = matchList.WordList.OrderByDescending(x => x.Frequency).ToList();
             return matchList;
         }
 
@@ -169,6 +174,7 @@ namespace WebCrawlerProject.Controllers
                 var secondTotalCount = subSiteInfo.WordList.Sum(x => x.Frequency);
                 subSiteInfo.IndexingScore /= secondTotalCount;
 
+                subSiteInfo.IndexingScore = decimal.Round(subSiteInfo.IndexingScore, 4, MidpointRounding.AwayFromZero);
                 resultModel.SubSites.Add(subSiteInfo);
             }
 

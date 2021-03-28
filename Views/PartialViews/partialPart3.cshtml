@@ -28,11 +28,26 @@
 
 <div class="card-body table-responsive col col-sm-12 ">
 
-
-    <h3 class="sbs-title">Kelimeler ve frekansları</h3>
     <div class="badge-container">
+        <h2>Siteler arası benzerlik skoru : <span id="spanScore"></span></h2>
+        <h4>Eşleşen Kelimeler : </h4> <div id="divMatchKeywords"></div>
+        <br />
+        <div class="row">
+            <div class="col-sm-6">
+                <h4>Site 1 : <span id="spanFirstSite"></span></h4>
+                <h4>Anahtar Kelimeler : </h4>
+                <div id="divFirstSiteKeywords">
 
-     
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <h4>Site 2 : <span id="spanSecondSite"></span></h4>
+                <h4>Anahtar Kelimeler : </h4>
+                <div id="divSecondSiteKeywords">
+
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -56,9 +71,43 @@
             data: model,
             success: function (data) {
                 console.log(data);
-                $.each(data, function (index, value) {
-                    //$('#spanArea').append("<span class='badge badge-primary'>" + value + " - ( 150 ) </span>");
-                });
+                if (data != null) {
+                    $('#spanScore').text(data.score);
+                }
+
+                if (data.wordList != null) {
+                    var calculate = "<br> Formül : ";
+                    $.each(data.wordList, function (index, value) {
+                        $('#divMatchKeywords').append(" <span class='badge badge-primary' style='text-align:left!important'> Kelime : " + value.word + " <br> İkinci Site Frekansı : " + value.frequency + " </span> ");
+                        console.log("index : " + index + " - lenght : " + data.wordList.length);
+
+                        calculate += value.frequency;
+                        if (index < (data.wordList.length - 1)) {
+                            calculate += "+";
+                        }
+                        
+                    });
+                    calculate += "/" + data.divide;
+                    $('#spanScore').append(calculate);
+                }
+
+                if (data.firstSite != null) {
+                    $('#spanFirstSite').text(data.firstSite.url);
+                    if (data.firstSite.wordList != null) {
+                        $.each(data.firstSite.wordList, function (index, value) {
+                            $('#divFirstSiteKeywords').append(" <span class='badge badge-primary' style='text-align:left!important'> Kelime : " + value.word + " <br> Frekans : " + value.frequency + " </span> ");
+                        });
+                    }
+                }
+
+                if (data.secondSite != null) {
+                    $('#spanSecondSite').text(data.secondSite.url);
+                    if (data.secondSite.wordList != null) {
+                        $.each(data.secondSite.wordList, function (index, value) {
+                            $('#divSecondSiteKeywords').append(" <span class='badge badge-primary' style='text-align:left!important'> Kelime : " + value.word + " <br> Frekans : " + value.frequency + " </span> ");
+                        });
+                    }
+                }
             },
             error: function (error) {
                 console.log(JSON.stringify(error))

@@ -43,7 +43,7 @@
             success: function (data) {
                 if (data != null && data.wordList != null) {
                     $.each(data.wordList, function (index, item) {
-                        $('#spanArea').append(" <span class='badge badge-primary'> Kelime : " + item.word + " - ( Frekans : " + item.frequency + " ) </span>");
+                        $('#spanArea').append(" <span class='badge badge-primary'> Kelime : " + item.word + " <br> Frekans : " + item.frequency + " </span>");
                     });
                 }
             },

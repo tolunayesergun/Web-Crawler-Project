@@ -24,7 +24,15 @@
 
 
 <div class="card-body table-responsive col col-sm-12 ">
-    <h3 class="sbs-title">Kelimeler ve frekansları</h3>
+    <h3 class="sbs-title">Kelimeler ve Skorları</h3>
+    Uzunluğu 3 karakterden küçük olanlar her tekrar edişlerinde +1 puan diğerleri +2 puan
+    <br />
+    Uzunluğu 3 karakterden büyük olup URL içinde geçenlere +6 puan
+    <br />
+    Uzunluğu 3 karakterden büyük olup Site Başlığının içinde geçenlere +5 puan
+    <br />
+    Uzunluğu 3 karakterden büyük olup SEO Tagleri içinde geçenlere +4 puan
+    <br /><br />
     <div id="spanArea">
     </div>
 </div>
@@ -45,7 +53,7 @@
             success: function (data) {
                 if (data != null && data.wordList != null) {
                     $.each(data.wordList, function (index, item) {
-                        $('#spanArea').append(" <span class='badge badge-primary'> Kelime : " + item.word + " - ( Skor : " + item.score + " ) </span> ");
+                        $('#spanArea').append(" <span class='badge badge-primary'> Kelime : " + item.word + " <br> Skor : " + item.score + " </span> ");
                     });
                 }
             },

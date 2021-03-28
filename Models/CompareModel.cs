@@ -9,7 +9,8 @@ namespace WebCrawlerProject.Models
             WordList = new List<WordModel>();
         }
 
-        public int Score { get; set; }
+        public decimal Score { get; set; }
+        public int Divide { get; set; }
         public UrlModel FirstSite { get; set; }
         public UrlModel SecondSite { get; set; }
         public List<WordModel> WordList { get; set; }
