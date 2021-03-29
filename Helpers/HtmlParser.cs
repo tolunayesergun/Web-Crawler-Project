@@ -1,6 +1,8 @@
 ﻿using HtmlAgilityPack;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -316,6 +318,19 @@ namespace WebCrawlerProject.Helpers
             url = url.EndsWith("/") ? url.Substring(0, url.Length - 1) : url;
 
             return url;
+        }
+
+        public static List<SynonymDTO> FindSynonyms(string Word)
+        {
+            var syno = new List<SynonymDTO>();
+            var path = Path.Combine(Environment.CurrentDirectory, "wwwroot", "Resources", "Synonyms.json");
+            using (StreamReader reader = new StreamReader(path, Encoding.UTF8, false))
+            {
+               syno = JsonConvert.DeserializeObject<List<SynonymDTO>>(reader.ReadToEnd().ToString());
+            }
+
+            return syno.Where(p => p.kelime == Word).ToList();
+
         }
     }
 }
