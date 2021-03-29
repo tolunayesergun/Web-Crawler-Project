@@ -144,7 +144,7 @@ namespace WebCrawlerProject.Controllers
             matchList.Score /= secondTotalCount;
             matchList.Divide = secondTotalCount;
 
-            matchList.Score = decimal.Round(matchList.Score, 2, MidpointRounding.AwayFromZero);
+            matchList.Score = decimal.Round(matchList.Score, 4, MidpointRounding.AwayFromZero);
 
             WordList1.WordList = WordList1.WordList.OrderByDescending(x => x.Frequency).Take(10).ToList();
             WordList2.WordList = WordList2.WordList.OrderByDescending(x => x.Frequency).Take(10).ToList();

@@ -83,14 +83,17 @@ namespace WebCrawlerProject.Helpers
 
             //sayfa içindeki metin içerikleri al
             var chunks = new List<string>();
-            foreach (var item in document.DocumentNode.DescendantsAndSelf())
+            if (document != null)
             {
-                if (item.NodeType == HtmlNodeType.Text)
+                foreach (var item in document.DocumentNode.DescendantsAndSelf())
                 {
-                    var parentNode = item.ParentNode.Name.ToUpper();
-                    if (parentNode != "STYLE" && parentNode != "SCRIPT" && item.InnerText.Trim() != "")
+                    if (item.NodeType == HtmlNodeType.Text)
                     {
-                        chunks.Add(ClearSpecialChars(item.InnerText.Trim()));
+                        var parentNode = item.ParentNode.Name.ToUpper();
+                        if (parentNode != "STYLE" && parentNode != "SCRIPT" && item.InnerText.Trim() != "")
+                        {
+                            chunks.Add(ClearSpecialChars(item.InnerText.Trim()));
+                        }
                     }
                 }
             }
@@ -107,7 +110,7 @@ namespace WebCrawlerProject.Helpers
         public static string GetTitleText(HtmlDocument document)
         {
             var result = "";
-            if (document.DocumentNode.SelectSingleNode("//title") != null)
+            if (document != null && document.DocumentNode.SelectSingleNode("//title") != null)
             {
                 result = document.DocumentNode.SelectSingleNode("//title").InnerText;
             }
@@ -120,7 +123,7 @@ namespace WebCrawlerProject.Helpers
             var result = "";
 
             //meta dataları da al
-            var list = document.DocumentNode.SelectNodes("//meta");
+            var list = document?.DocumentNode?.SelectNodes("//meta");
             if (list != null)
             {
                 foreach (var node in list)
@@ -140,7 +143,7 @@ namespace WebCrawlerProject.Helpers
         public static string GetImgAltText(HtmlDocument document)
         {
             string result = "";
-            var altTexts = document.DocumentNode.Descendants("img")
+            var altTexts = document?.DocumentNode?.Descendants("img")
                                 .Select(e => e.GetAttributeValue("alt", null))
                                 .Where(s => !String.IsNullOrEmpty(s));
 
@@ -223,25 +226,28 @@ namespace WebCrawlerProject.Helpers
                 item.KeywordList = item.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
                 model.KeywordList.AddRange(item.KeywordList);
 
-                foreach (HtmlNode link in document.DocumentNode.SelectNodes("//a[@href]"))
+                if (document != null && document.DocumentNode.SelectNodes("//a[@href]") != null)
                 {
-                    var href = link.Attributes.FirstOrDefault(x => x.Name.ToUpper() == "HREF");
-                    if (href != null && !href.Value.ToUpper().StartsWith("TEL") && !href.Value.ToUpper().StartsWith("MAILTO") && GetBaseUrl(ConvertUrl(href.Value, model.Url)) == GetBaseUrl(ConvertUrl(model.Url, model.Url)))
+                    foreach (HtmlNode link in document.DocumentNode.SelectNodes("//a[@href]"))
                     {
-                        var tempPointer = new UrlModel { Level = 2, Url = ConvertUrl(href.Value, model.Url) };
-                        var convertedHref = ConvertUrl(href.Value, model.Url);
-                        var upperConvertedHref = convertedHref.ToUpper();
-                        if (!processed.Any(x => x.ToUpper() == upperConvertedHref))
+                        var href = link.Attributes.FirstOrDefault(x => x.Name.ToUpper() == "HREF");
+                        if (href != null && !href.Value.ToUpper().StartsWith("TEL") && !href.Value.ToUpper().StartsWith("MAILTO") && GetBaseUrl(ConvertUrl(href.Value, model.Url)) == GetBaseUrl(ConvertUrl(model.Url, model.Url)))
                         {
-                            if (!upperConvertedHref.EndsWith(".PNG") && !upperConvertedHref.EndsWith(".JPG") && !upperConvertedHref.EndsWith(".JPEG") && !upperConvertedHref.EndsWith(".GIF") && !upperConvertedHref.EndsWith(".GİF"))
+                            var tempPointer = new UrlModel { Level = 2, Url = ConvertUrl(href.Value, model.Url) };
+                            var convertedHref = ConvertUrl(href.Value, model.Url);
+                            var upperConvertedHref = convertedHref.ToUpper();
+                            if (!processed.Any(x => x.ToUpper() == upperConvertedHref))
                             {
-                                processed.Add(convertedHref);
-                                var thirdLevelDocument = Crawler.GetHtmlContent(convertedHref);
-                                var addItem = new UrlModel { Level = 3, Url = convertedHref, WordList = GetWordsAsList(thirdLevelDocument, convertedHref) };
-                                addItem.KeywordList = addItem.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
-                                model.KeywordList.AddRange(addItem.KeywordList);
-                                model.AllWordOffSite.AddRange(addItem.WordList);
-                                item.ChildUrlList.Add(addItem);
+                                if (!upperConvertedHref.EndsWith(".PNG") && !upperConvertedHref.EndsWith(".JPG") && !upperConvertedHref.EndsWith(".JPEG") && !upperConvertedHref.EndsWith(".GIF") && !upperConvertedHref.EndsWith(".GİF"))
+                                {
+                                    processed.Add(convertedHref);
+                                    var thirdLevelDocument = Crawler.GetHtmlContent(convertedHref);
+                                    var addItem = new UrlModel { Level = 3, Url = convertedHref, WordList = GetWordsAsList(thirdLevelDocument, convertedHref) };
+                                    addItem.KeywordList = addItem.WordList.OrderByDescending(x => x.Score).Take(10).ToList();
+                                    model.KeywordList.AddRange(addItem.KeywordList);
+                                    model.AllWordOffSite.AddRange(addItem.WordList);
+                                    item.ChildUrlList.Add(addItem);
+                                }
                             }
                         }
                     }
