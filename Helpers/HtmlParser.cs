@@ -181,7 +181,7 @@ namespace WebCrawlerProject.Helpers
                 foreach (HtmlNode link in document.DocumentNode.SelectNodes("//a[@href]"))
                 {
                     var href = link.Attributes.FirstOrDefault(x => x.Name.ToUpper() == "HREF");
-                    if (href != null && !href.Value.ToUpper().StartsWith("TEL") && !href.Value.ToUpper().StartsWith("MAILTO") && GetBaseUrl(ConvertUrl(href.Value, baseUrl)) == GetBaseUrl(ConvertUrl(baseUrl, baseUrl)))
+                    if (!href.Value.Contains("javascript:") && href != null && !href.Value.ToUpper().StartsWith("TEL") && !href.Value.ToUpper().StartsWith("MAILTO") && GetBaseUrl(ConvertUrl(href.Value, baseUrl)) == GetBaseUrl(ConvertUrl(baseUrl, baseUrl)))
                     {
                         var tempPointer = new UrlModel { Level = 2, Url = ConvertUrl(href.Value, baseUrl) };
                         var convertedHref = ConvertUrl(href.Value, baseUrl);
@@ -325,17 +325,39 @@ namespace WebCrawlerProject.Helpers
             return url;
         }
 
-        public static List<SynonymDTO> FindSynonyms(string Word)
+        public static List<String> FindSynonyms(WordModel Word)
         {
+            var returnResult = new List<String>();
             var syno = new List<SynonymDTO>();
             var path = Path.Combine(Environment.CurrentDirectory, "wwwroot", "Resources", "Synonyms.json");
             using (StreamReader reader = new StreamReader(path, Encoding.UTF8, false))
             {
-               syno = JsonConvert.DeserializeObject<List<SynonymDTO>>(reader.ReadToEnd().ToString());
+                syno = JsonConvert.DeserializeObject<List<SynonymDTO>>(reader.ReadToEnd().ToString());
             }
 
-            return syno.Where(p => p.kelime == Word).ToList();
+            var result = syno.FirstOrDefault(p => p.kelime == Word.Word);
+            Word.SynmonsList = result;
+            if (result != null)
+            {
+                if (!string.IsNullOrEmpty(result.esanlam))
+                {
+                    returnResult.Add(result.esanlam);
+                }
+                if (!string.IsNullOrEmpty(result.esanlam2))
+                {
+                    returnResult.Add(result.esanlam2);
+                }
+                if (!string.IsNullOrEmpty(result.esanlam3))
+                {
+                    returnResult.Add(result.esanlam3);
+                }
+                if (!string.IsNullOrEmpty(result.esanlam4))
+                {
+                    returnResult.Add(result.esanlam4);
+                }
+            }
 
+            return returnResult;
         }
     }
 }

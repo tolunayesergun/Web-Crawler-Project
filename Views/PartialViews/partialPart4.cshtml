@@ -155,9 +155,16 @@
             text = "Skor : (" + obj.indexingScore + ") - " + text;
         }
 
+        var keywords = '';
+        $.each(obj.keywordList, function (keyIndex, keyValue) {
+            if (keyIndex < 6) {
+                keywords += keyValue.word + '(' + keyValue.frequency + ') ';
+            }
+        });
+
         var item = {
             "id": id,
-            "text": text,
+            "text": text + " (Keywords : " + keywords + ")",
                     "children": []
         };
 
@@ -169,9 +176,16 @@
                 }
                 else {
 
+                    keywords = '';
+                    $.each(value.keywordList, function (keyIndex, keyValue) {
+                        if (keyIndex < 6) {
+                            keywords += keyValue.word + '(' + keyValue.frequency + ') ';
+                        }
+                    });
+
                     item.children.push({
                         "id": (id + "-" + incrementId),
-                        "text": value.url,
+                        "text": value.url + " (Keywords : " + keywords + ")",
                         "children": []
                     });
                 }

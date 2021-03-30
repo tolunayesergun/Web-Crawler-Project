@@ -81,6 +81,14 @@ namespace WebCrawlerProject.Controllers
         }
 
         [HttpPost]
+        public JsonResult SymanticIndexAndOrder(string baseUrl, string[] siteList)
+        {
+            var result = Symantic(baseUrl, siteList);
+
+            return Json(result);
+        }
+
+        [HttpPost]
         public ActionResult viewPart1()
         {
 
@@ -160,17 +168,28 @@ namespace WebCrawlerProject.Controllers
             foreach (var siteUrl in siteList)
             {
                 var subSiteInfo = HtmlParser.GetPageInfoByUrl(siteUrl, true);
-                subSiteInfo.IndexingScore = 1;
-                foreach (var item in resultModel.BaseSite.KeywordList)
+                subSiteInfo.KeywordList = new List<WordModel>();
+                subSiteInfo.IndexingScore = 0;
+
+                subSiteInfo.IndexingScore = CalcIndexScore(subSiteInfo, subSiteInfo.IndexingScore, resultModel.BaseSite.KeywordList);
+                if (subSiteInfo.ChildUrlList != null)
                 {
-                    if (subSiteInfo.WordList.Any(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I")))
+                    foreach (var childs in subSiteInfo.ChildUrlList)
                     {
-                        var word = subSiteInfo.WordList.FirstOrDefault(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I"));
-                        subSiteInfo.IndexingScore *= word.Frequency;
+                        var res = CalcIndexScore(childs, subSiteInfo.IndexingScore, resultModel.BaseSite.KeywordList);
+
+                        if (childs.ChildUrlList != null)
+                        {
+                            foreach (var subChilds in childs.ChildUrlList)
+                            {
+                                var subRes = CalcIndexScore(subChilds, subSiteInfo.IndexingScore, resultModel.BaseSite.KeywordList);
+                            }
+                        }
                     }
                 }
 
-                var secondTotalCount = subSiteInfo.WordList.Sum(x => x.Frequency);
+                var secondTotalCount = subSiteInfo.AllWordOffSite.Sum(x => x.Frequency);
+
                 subSiteInfo.IndexingScore /= secondTotalCount;
 
                 subSiteInfo.IndexingScore = decimal.Round(subSiteInfo.IndexingScore, 4, MidpointRounding.AwayFromZero);
@@ -178,6 +197,104 @@ namespace WebCrawlerProject.Controllers
             }
 
             resultModel.SubSites = resultModel.SubSites.OrderByDescending(x => x.IndexingScore).ToList();
+            resultModel.BaseSite.KeywordList = resultModel.BaseSite.KeywordList.Where(x => x.SynmonsList != null).ToList();
+            return resultModel;
+        }
+
+        private decimal CalcIndexScore(UrlModel model, decimal score, List<WordModel> keys)
+        {
+            model.KeywordList = new List<WordModel>();
+            foreach (var item in keys)
+            {
+                if (model.WordList.Any(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I")))
+                {
+                    score = score != 0 ? score : 1;
+                    var word = model.WordList.FirstOrDefault(x => x.Word.ToUpper().Replace("İ", "I") == item.Word.ToUpper().Replace("İ", "I"));
+                    model.KeywordList.Add(word);
+                    try
+                    {
+                        score *= word.Frequency;
+                    }
+                    catch (Exception)
+                    {
+                        score = decimal.MaxValue;
+                    }
+                }
+            }
+            return score;
+        }
+
+        private decimal CalcScore(UrlModel model, decimal score, List<String> tempList)
+        {
+            model.KeywordList = new List<WordModel>();
+            foreach (var item in tempList)
+            {
+                if (model.WordList.Any(x => x.Word.Trim().ToUpper().Replace("İ", "I") == item.Trim().ToUpper().Replace("İ", "I")))
+                {
+                    score = score != 0 ? score : 1;
+                    var word = model.WordList.FirstOrDefault(x => x.Word.Trim().ToUpper().Replace("İ", "I") == item.Trim().ToUpper().Replace("İ", "I"));
+                    model.KeywordList.Add(word);
+                    try
+                    {
+                        score *= word.Frequency;
+                    }
+                    catch (Exception)
+                    {
+                        score = decimal.MaxValue;
+                    }
+                }
+            }
+            return score;
+        }
+
+        private IndexAndOrderModel Symantic(string baseUrl, string[] siteList)
+        {
+            var resultModel = new IndexAndOrderModel
+            {
+                BaseSite = HtmlParser.GetPageInfoByUrl(baseUrl, true)
+            };
+
+            var tempList = new List<String>();
+            foreach (var keyword in resultModel.BaseSite.KeywordList)
+            {
+                tempList.AddRange(HtmlParser.FindSynonyms(keyword));
+            }
+
+            tempList = tempList.GroupBy(x => x).Select(x => x.Key).ToList();
+
+            foreach (var siteUrl in siteList)
+            {
+                var subSiteInfo = HtmlParser.GetPageInfoByUrl(siteUrl, true);
+                subSiteInfo.KeywordList = new List<WordModel>();
+                subSiteInfo.IndexingScore = 0;
+
+                subSiteInfo.IndexingScore = CalcScore(subSiteInfo, subSiteInfo.IndexingScore, tempList);
+                if (subSiteInfo.ChildUrlList != null)
+                {
+                    foreach (var childs in subSiteInfo.ChildUrlList)
+                    {
+                        var res = CalcScore(childs, subSiteInfo.IndexingScore, tempList);
+
+                        if (childs.ChildUrlList != null)
+                        {
+                            foreach (var subChilds in childs.ChildUrlList)
+                            {
+                                var subRes = CalcScore(subChilds, subSiteInfo.IndexingScore, tempList);
+                            }
+                        }
+                    }
+                }
+
+                var secondTotalCount = subSiteInfo.AllWordOffSite.Sum(x => x.Frequency);
+
+                subSiteInfo.IndexingScore /= secondTotalCount;
+
+                subSiteInfo.IndexingScore = decimal.Round(subSiteInfo.IndexingScore, 4, MidpointRounding.AwayFromZero);
+                resultModel.SubSites.Add(subSiteInfo);
+            }
+
+            resultModel.SubSites = resultModel.SubSites.OrderByDescending(x => x.IndexingScore).ToList();
+            resultModel.BaseSite.KeywordList = resultModel.BaseSite.KeywordList.Where(x => x.SynmonsList != null).ToList();
             return resultModel;
         }
     }

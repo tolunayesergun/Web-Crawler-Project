@@ -1,15 +1,58 @@
-﻿
+﻿<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    ul, #myUL {
+        list-style-type: none;
+    }
 
+    #myUL {
+        margin: 0;
+        padding: 0;
+    }
 
+    .caret {
+        cursor: pointer;
+        -webkit-user-select: none; /* Safari 3.1+ */
+        -moz-user-select: none; /* Firefox 2+ */
+        -ms-user-select: none; /* IE 10+ */
+        user-select: none;
+    }
+
+        .caret::before {
+            content: "\25B6";
+            color: black;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+    .caret-down::before {
+        -ms-transform: rotate(90deg); /* IE 9 */
+        -webkit-transform: rotate(90deg); /* Safari */
+        ' transform: rotate(90deg);
+    }
+
+    .nested {
+        display: none;
+    }
+
+    .active {
+        display: block;
+        background: white !important;
+        color: black !important;
+    }
+</style>
+<script src="@Url.Content("~/js/tree.min.js")"></script>
 <div class="card  text-center ">
     <div class="card-body table-responsive col col-sm-12 ">
         <div class="d-flex justify-content-center">
             <div class="col col-10">
-                <b>Alakalı anahtar kelimeleri bulur ve yazdırır.
+                <b>
+                    Web sitelerini benzerlik skorlarına göre yüksekten düşüğe doğru Sıralar
+                    Her URL için, sırasını, skorunu, alt URL’lerin ağaç yapısını ve her duğümdeki
+                    her bir anahtar kelimenin yer alma sayısı ile birlikte yazdırır
                 </b>
                 <div class="input-group mt-2">
                     <div class="input-group mb-3 mt-1 mb-1">
-                        <input type="text" class="form-control text-center shadow-none" placeholder="Base URL" aria-label="Base URL" aria-describedby="basic-addon2" onfocus="this.placeholder = ''" onblur="this.placeholder = ' Base URL'">
+                        <input id="baseUrl" type="text" class="form-control text-center shadow-none" placeholder="Base URL" aria-label="Base URL" aria-describedby="basic-addon2" onfocus="this.placeholder = ''" onblur="this.placeholder = ' Base URL'">
                         <div class="input-group-append">
 
                         </div>
@@ -49,7 +92,7 @@
 
 
 
-                <button class="btn btn-success mt-4" type="button" id="createSpan">İndexle Ve Sırala</button>
+                <button class="btn btn-success mt-4" type="button" onclick="indexAndOrderSites()" id="btnIndex">İndexle Ve Sırala</button>
             </div>
         </div>
     </div>
@@ -57,62 +100,126 @@
 
 
 <div class="card-body table-responsive col col-sm-12 ">
-
-
-    <h3 class="sbs-title">Kelimeler ve frekansları</h3>
-    <div class="badge-container">
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
-        <span class="badge badge-primary"> Badge - ( 150 ) </span>
+    <h3 class="sbs-title">Anahtar Kelimeler ve eşanlamları</h3>
+    <div id="DivSymantic">
 
     </div>
+    <h3 class="sbs-title">Kelimeler ve frekansları</h3>
+    <div class="container">
 
+    </div>
 </div>
 
-
 <script>
+
+    function indexAndOrderSites() {
+        checkedItems = [];
+        let weburl1 = $("#baseUrl").val();
+        let weburl2 = urlPoolArray;
+
+        var model = {
+            "baseUrl": weburl1,
+            "siteList": weburl2
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/SymanticIndexAndOrder",
+            data: model,
+            success: function (data) {
+                console.log(data);
+
+                var mainModel = [{ id: '-1', text: 'Sitelerin Ağaç Yapıları', children: [] }];
+
+                if (data.baseSite != null) {
+                    mainModel[0].children.push(TreeViewNode(data.baseSite, "0")[0]);
+
+                    $.each(data.baseSite.keywordList, function (symIndex, symValue) {
+                        $('#DivSymantic').append(" <span class='badge badge-primary' style='text-align:left!important'> Kelime : " + symValue.word + " <br> Esanlam : " + symValue.synmonsList.esanlam + " - Esanlam2 : " + symValue.synmonsList.esanlam2 + " - Esanlam3 : " + symValue.synmonsList.esanlam3 + " - Esanlam4 : " + symValue.synmonsList.esanlam4 + " </span> ");
+                    });
+                }
+
+                if (data.subSites != null) {
+                    $.each(data.subSites, function (index, value) {
+                        mainModel[0].children.push(TreeViewNode(value, "0")[0]);
+                    });
+                }
+
+                initiateTreeView(mainModel);
+            },
+            error: function (error) {
+                console.log(JSON.stringify(error))
+            }
+        })
+
+    };
+
+    function TreeViewNode(obj, id, isSub = false) {
+        debugger;
+        var model = [];
+
+        var text = obj.url;
+        if (!isSub) {
+            text = "Skor : (" + obj.indexingScore + ") - " + text;
+        }
+
+        var keywords = '';
+        $.each(obj.keywordList, function (keyIndex, keyValue) {
+            if (keyIndex < 6) {
+                keywords += keyValue.word + '(' + keyValue.frequency + ') ';
+            }
+        });
+
+        var item = {
+            "id": id,
+            "text": text + " (Keywords : " + keywords + ")",
+            "children": []
+        };
+
+        var incrementId = 0;
+        if (obj.childUrlList != null) {
+            $.each(obj.childUrlList, function (index, value) {
+                if (value.childUrlList != null && value.childUrlList.length > 0) {
+                    item.children.push(TreeViewNode(value, (id + "-" + incrementId), true));
+                }
+                else {
+
+                    keywords = '';
+                    $.each(value.keywordList, function (keyIndex, keyValue) {
+                        if (keyIndex < 6) {
+                            keywords += keyValue.word + '(' + keyValue.frequency + ') ';
+                        }
+                    });
+
+                    item.children.push({
+                        "id": (id + "-" + incrementId),
+                        "text": value.url + " (Keywords : " + keywords + ")",
+                        "children": []
+                    });
+                }
+                incrementId++;
+            });
+        }
+
+        if (isSub) {
+            return item;
+        }
+        model.push(item);
+        return model;
+    }
+
+    function initiateTreeView(model) {
+        console.log(model);
+        let tree = new Tree('.container', {
+            data: model,
+            closeDepth: 3,
+            loaded: function () {
+            },
+            onChange: function () {
+            }
+        })
+    }
+
     urlPoolArray = new Array();
 
     function badgetCreate(url) {
