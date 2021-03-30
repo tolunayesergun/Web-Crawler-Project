@@ -21,8 +21,6 @@ namespace WebCrawlerProject.Controllers
 
         public IActionResult Index()
         {
-            var deneme = HtmlParser.FindSynonyms("beyaz");
-            var deneme2 = 5;
             return View();
         }
 

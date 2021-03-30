@@ -155,7 +155,6 @@ namespace WebCrawlerProject.Helpers
             return result;
         }
 
-        //gereksiz karakterleri temizleyip sadece içeriği bırakıyoruz. (regex ile de yapılabilir)
         public static string ClearSpecialChars(this string str)
         {
             str = str.Replace("&copy", "");
